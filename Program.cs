@@ -10,8 +10,13 @@ List<LoginModel> obj = new List<LoginModel>();
 obj.Add(new LoginModel { Username = "user123", Password = "user123"});
 
 app.MapPost("/", (LoginModel login) => {
-    if (obj.Contains(login))
+    if (obj.Any(user => user.Username == login.Username && user.Password == login.Password))
+    {
+        System.Diagnostics.Debug.WriteLine("Successful!");
         return Results.Created("Success", login);
+    }
+
+    System.Diagnostics.Debug.WriteLine("Successful!");
     return Results.Created("Not working",  "Not Working");
 });
 
@@ -32,19 +37,11 @@ public class LoginModel
 
     public string? Username { get; set; }
     public string? Password { get; set; }
-}
-public class AboutModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
-{
-    private readonly ILogger _logger;
 
-    public AboutModel(ILogger<AboutModel> logger)
+    public bool equals(object obj)
     {
-        _logger = logger;
-    }
-
-    public void OnGet()
-    {
-        _logger.LogInformation("About page visited at {DT}",
-            DateTime.UtcNow.ToLongTimeString());
+        LoginModel? login = obj as LoginModel;
+        if (login == null) return false;
+        return login.Username == this.Username && login.Password == this.Password;
     }
 }
